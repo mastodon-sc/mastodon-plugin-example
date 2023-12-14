@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	
+	<parent>
+		<groupId>org.scijava</groupId>
+		<artifactId>pom-scijava</artifactId>
+		<version>37.0.0</version>
+	</parent>
+	
+	<!-- Of course, make sure to replace `mastodon-plugin-example` by whatever your own
+	artifact is going to be called. -->
+
+	<groupId>org.mastodon</groupId>
+	<artifactId>mastodon-plugin-example</artifactId>
+	<version>1.0.0-beta-23-SNAPSHOT</version>
+
+	<name>Mastodon Plugin Example</name>
+	<description>A template / example code to start coding your own Mastodon plugin.</description>
+	<url>https://github.com/mastodon-sc/mastodon</url>
+	<inceptionYear>2023</inceptionYear>
+	<organization>
+		<name>Mastodon Science</name>
+		<url>https://mastodon.org</url>
+	</organization>
+	<licenses>
+		<license>
+			<name>Simplified BSD License</name>
+			<url>https://opensource.org/licenses/BSD-2-Clause</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<!-- Below we include all the main mastodon artifacts as dependencies, in case you 
+	need them in your plugin. Feel free to remove what you do not need. -->
+
+	<properties>
+	
+		<mastodon.group>org.mastodon</mastodon.group>
+		<mastodon-collection.version>1.0.0-beta-25</mastodon-collection.version>
+		<mastodon-graph.version>1.0.0-beta-25</mastodon-graph.version>
+		<mastodon.version>1.0.0-beta-27</mastodon.version>
+		<mastodon-ellipsoid-fitting.version>0.4.0</mastodon-ellipsoid-fitting.version>
+		<mastodon-tracking.version>1.0.0-beta-14</mastodon-tracking.version>
+		<mastodon-selection-creator.version>0.0.7</mastodon-selection-creator.version>
+		<mastodon-pasteur.version>1.0.0-beta-7</mastodon-pasteur.version>
+		<mastodon-tomancak.version>0.4.0</mastodon-tomancak.version>
+		
+		<package-name>org.mastodon</package-name>
+
+		<license.licenseName>bsd_2</license.licenseName>
+		<license.projectName>Mastodon</license.projectName>
+		<license.organizationName>Mastodon authors</license.organizationName>
+		<license.copyrightOwners>Tobias Pietzsch, Jean-Yves Tinevez</license.copyrightOwners>
+
+		<releaseProfiles>deploy-to-scijava</releaseProfiles>
+
+	</properties>
+
+	<mailingLists>
+		<mailingList>
+			<name>Image.sc Forum</name>
+			<archive>https://forum.image.sc/tags/mastodon</archive>
+		</mailingList>
+	</mailingLists>
+
+	<!-- Here as well, replace `mastodon-plugin-example` by the name of your own artifact. -->
+
+	<scm>
+		<connection>scm:git:git://github.com/mastodon-sc/mastodon-plugin-example</connection>
+		<developerConnection>scm:git:git@github.com:mastodon-sc/mastodon-plugin-example</developerConnection>
+		<tag>HEAD</tag>
+		<url>https://github.com/mastodon-sc/mastodon-plugin-example</url>
+	</scm>
+	<issueManagement>
+		<system>GitHub</system>
+		<url>https://github.com/mastodon-sc/mastodon-plugin-example/issues</url>
+	</issueManagement>
+	<ciManagement>
+		<system>Travis CI</system>
+		<url>https://travis-ci.com/mastodon-sc/mastodon-plugin-example</url>
+	</ciManagement>
+
+	<!-- And of course, list yourself as developer below, instead of me. -->
+
+	<developers>
+		<developer>
+			<id>tinevez</id>
+			<name>Jean-Yves Tinevez</name>
+			<email>jean-yves.tinevez@pasteur.fr</email>
+			<url>https://research.pasteur.fr/en/member/jean-yves-tinevez/</url>
+			<organization>Institut Pasteur</organization>
+			<organizationUrl>http://www.pasteur.fr/</organizationUrl>
+			<roles>
+				<role>developer</role>
+			</roles>
+		</developer>
+	</developers>
+
+	<contributors>
+		<contributor>
+			<name>grrrr</name>
+		</contributor>
+	</contributors>
+
+	<repositories>
+		<repository>
+			<id>scijava.public</id>
+			<url>https://maven.scijava.org/content/groups/public</url>
+		</repository>
+	</repositories>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>${mastodon.group}</groupId>
+			<artifactId>mastodon-collection</artifactId>
+			<version>${mastodon-collection.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${mastodon.group}</groupId>
+			<artifactId>mastodon-graph</artifactId>
+			<version>${mastodon-graph.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${mastodon.group}</groupId>
+			<artifactId>mastodon</artifactId>
+			<version>${mastodon.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${mastodon.group}</groupId>
+			<artifactId>mastodon-ellipsoid-fitting</artifactId>
+			<version>${mastodon-ellipsoid-fitting.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${mastodon.group}</groupId>
+			<artifactId>mastodon-tracking</artifactId>
+			<version>${mastodon-tracking.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${mastodon.group}</groupId>
+			<artifactId>mastodon-selection-creator</artifactId>
+			<version>${mastodon-selection-creator.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${mastodon.group}</groupId>
+			<artifactId>mastodon-pasteur</artifactId>
+			<version>${mastodon-pasteur.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${mastodon.group}</groupId>
+			<artifactId>mastodon-tomancak</artifactId>
+			<version>${mastodon-tomancak.version}</version>
+		</dependency>
+		
+	</dependencies>
+</project>
