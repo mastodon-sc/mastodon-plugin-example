@@ -1,18 +1,19 @@
+package org.mastodon.mamut.example.plugin;
+
 import org.mastodon.mamut.launcher.MastodonLauncherCommand;
 import org.scijava.Context;
 import org.scijava.command.CommandService;
-import org.scijava.ui.UIService;
+
+import ij.ImageJ;
 
 public class PluginExampleTestDrive
 {
 
 	public static void main( final String[] args )
 	{
+		ImageJ.main( args );
 		@SuppressWarnings( "resource" )
-		final Context context = new Context();
-		final UIService uiService = context.service( UIService.class );
-		uiService.showUI();
-		final CommandService commandService = context.service( CommandService.class );
+		final CommandService commandService = new Context().service( CommandService.class );
 		commandService.run( MastodonLauncherCommand.class, true );
 	}
 }
