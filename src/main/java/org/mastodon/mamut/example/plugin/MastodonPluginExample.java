@@ -2,12 +2,17 @@ package org.mastodon.mamut.example.plugin;
 
 import java.awt.event.ActionEvent;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import javax.swing.JOptionPane;
 
 import org.mastodon.app.MastodonIcons;
+import org.mastodon.app.ui.ViewMenuBuilder.MenuItem;
 import org.mastodon.mamut.KeyConfigScopes;
+import org.mastodon.mamut.MamutMenuBuilder;
 import org.mastodon.mamut.ProjectModel;
 import org.mastodon.mamut.model.Model;
 import org.mastodon.mamut.model.ModelGraph;
@@ -18,6 +23,15 @@ import org.scijava.ui.behaviour.io.gui.CommandDescriptionProvider;
 import org.scijava.ui.behaviour.io.gui.CommandDescriptions;
 import org.scijava.ui.behaviour.util.AbstractNamedAction;
 import org.scijava.ui.behaviour.util.Actions;
+
+/*
+ * We document in this example the Mastodon generic plugin system.
+ * Here the documention is given in the code, and in this class we 
+ * made some effort so that it can be read top to bottom, as for a 
+ * normal documentation text. But this class compiles and yields a 
+ * working plugin, fully integrated in Mastodon, albeit a little 
+ * complexity and usefulness.
+ */
 
 /*
  * This class represents a generic plugin, the most flexible extension
@@ -33,7 +47,7 @@ import org.scijava.ui.behaviour.util.Actions;
  *  
  * The Mastodon application is a Fiji end-user tool that focuses on 
  * tracking cells and building lineages in large 3D+T images. But the 
- * Mastodon technologies could be used to build other scientific
+ * Mastodon API could be used to build other scientific
  * applications, not necessarily focused on tracking, or focused on
  * tracking, but using another data model.
  *  
@@ -127,11 +141,11 @@ public class MastodonPluginExample implements MamutPlugin
 		 * >> String[] keyboardShortcuts = new String[] { "ctrl shift P",
 		 * "ctrl shift Q" };
 		 * 
-		 * As a coding style extremists we would recommend declaring the
-		 * shortcut in a String constant declared in the beginning of the class,
-		 * so that it can be easily modified later. We put it here now so that
-		 * this code example can be read from top to bottom without having to
-		 * jump too much.
+		 * As coding style extremists we would recommend declaring the shortcut
+		 * in a String constant declared in the beginning of the class, so that
+		 * it can be easily modified later. We put it here now so that this code
+		 * example can be read from top to bottom without having to jump too
+		 * much.
 		 */
 		final String keyboardShortcut = "ctrl shift P";
 
@@ -215,8 +229,8 @@ public class MastodonPluginExample implements MamutPlugin
 			 * code might change. Be mindful for instance about the fact that as
 			 * is, this code will run on the Event Dispatch Thread.
 			 * 
-			 * In our case we don't mind, because the code we run is trivial.
-			 * We want to count the number of spots currently in the model. For
+			 * In our case we don't mind, because the code we run is trivial. We
+			 * want to count the number of spots currently in the model. For
 			 * this we need to access some of the project model component.
 			 */
 
@@ -229,7 +243,7 @@ public class MastodonPluginExample implements MamutPlugin
 			 * It contains the mathematical graph of all tracks.
 			 */
 			final ModelGraph graph = model.getGraph();
-			
+
 			/*
 			 * The graph has vertices, which are the spots, or cells, in our
 			 * data.
@@ -337,6 +351,13 @@ public class MastodonPluginExample implements MamutPlugin
 			descriptions.add( actionName, keyboardShortcut, description );
 
 			/*
+			 * This is enough to make the action appear in the Preferences
+			 * dialog, in the Keymap section. For instance if you search for
+			 * 'example', the action name should appear in the 'Command' column,
+			 * with the key binding we defined.
+			 */
+
+			/*
 			 * Again, if you have more than one action declared in this plugin
 			 * class, simply repeat the method call above for each.
 			 */
@@ -349,4 +370,64 @@ public class MastodonPluginExample implements MamutPlugin
 	 * second one to give the menu item a user-friendly name.
 	 */
 
+	/*
+	 * Here is the method to create a menu item. We will add one that calls to
+	 * our action there.
+	 */
+	@Override
+	public List< MenuItem > getMenuItems()
+	{
+		/*
+		 * To create the menu item, we use a utility method, that accepts the
+		 * action name, and a menu path as a list of strings. To have the action
+		 * executed when the menu item is clicked, it is enough to simply enter
+		 * the action name.
+		 * 
+		 * The following will put the action with the name: 'my super mastodon
+		 * plugin example action' in the menu 'Plugins > Examples'.
+		 * 
+		 * The name used in this method must match the name of the action, hence
+		 * we kindly remind how adequate it would have been to declare it as a
+		 * constant at the top of this class.
+		 */
+		final String actionName = "my super mastodon plugin example action";
+		final MenuItem menuItem = MamutMenuBuilder.makeFullMenuItem(
+				actionName,
+				"Plugins", "Examples" );
+
+		/*
+		 * And new we can return this menu item in a list of 1 element. And if
+		 * you had more than one action declared in this plugin, you can create
+		 * several menu items for them, and return them in this method.
+		 */
+		return Collections.singletonList( menuItem );
+	}
+
+	/*
+	 * This is great and well, but not pretty. The menu item in Mastodon is at
+	 * the right place and does the right thing, but is named 'my super mastodon
+	 * plugin example action', which is the name of the action. The last method
+	 * we will see allows to customize the name of the menu item, and put
+	 * something more meaningful to the user.
+	 */
+
+	@Override
+	public Map< String, String > getMenuTexts()
+	{
+		/*
+		 * This method returns a map String -> String, in which you can put the
+		 * action name as key, and the desired text as value. For instance:
+		 */
+		final String actionName = "my super mastodon plugin example action";
+		return Collections.singletonMap(
+				actionName,
+				"Show N spots" );
+
+		/*
+		 * I will refrain from saying something about declaring the action name
+		 * as constant in the top of this class for convenience. But now you
+		 * should have in the 'Plugins > Examples' menu an item called 'Show N
+		 * spots', and that launches the action.
+		 */
+	}
 }
