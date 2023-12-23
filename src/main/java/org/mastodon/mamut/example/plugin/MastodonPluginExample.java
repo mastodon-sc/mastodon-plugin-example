@@ -6,6 +6,7 @@ import java.util.Date;
 
 import javax.swing.JOptionPane;
 
+import org.mastodon.app.MastodonIcons;
 import org.mastodon.mamut.KeyConfigScopes;
 import org.mastodon.mamut.ProjectModel;
 import org.mastodon.mamut.model.Model;
@@ -239,9 +240,13 @@ public class MastodonPluginExample implements MamutPlugin
 			 * Let's show this to the user.
 			 */
 			final Date now = new Date();
-			final String dateTxt = new SimpleDateFormat( "YYYY-MM-DD HH:MM" ).format( now );
+			final String dateTxt = new SimpleDateFormat( "YYYY-MM-dd HH:MM" ).format( now );
 			final String message = "On " + dateTxt + ", there were " + nSpots + " spots.";
-			JOptionPane.showMessageDialog( null, message );
+			JOptionPane.showMessageDialog( null,
+					message,
+					"example Mastodon plugin",
+					JOptionPane.INFORMATION_MESSAGE,
+					MastodonIcons.MASTODON_ICON_MEDIUM );
 		}
 	}
 
