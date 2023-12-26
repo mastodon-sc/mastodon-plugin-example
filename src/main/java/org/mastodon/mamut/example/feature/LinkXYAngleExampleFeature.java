@@ -107,7 +107,7 @@ public class LinkXYAngleExampleFeature implements Feature< Link >
 	 * the XY plane, but in 3D it requires 2 scalar angles. In such a feature,
 	 * you could use the polar angle and the azimuthal angle as projections. Or
 	 * the x, y and z coordinates a unit vector along the link. Or even return
-	 * then 2 angles and the 3 components. To choose the projections you need to
+	 * the 2 angles and the 3 components. To choose the projections you need to
 	 * think of the most direct way to use it in your track analysis pipeline.
 	 * 
 	 * In concrete implementations, we therefore need to give the specifications
@@ -177,12 +177,12 @@ public class LinkXYAngleExampleFeature implements Feature< Link >
 					LinkXYAngleExampleFeature.class, // 3. The feature class.
 					Link.class, // 4. The class of the data item.
 					Multiplicity.SINGLE, // 5. The multiplicity.
-					PROJECTION_SPEC ); // 6... The list of projections.
+					PROJECTION_SPEC ); // 6... The list of projection specs.
 		}
 	}
 
 	/*
-	 * Now we instantiate and keep and instance of this feature spec class.
+	 * Now we instantiate and keep an instance of this feature spec class.
 	 */
 	public static final Spec SPEC = new Spec();
 
@@ -292,9 +292,9 @@ public class LinkXYAngleExampleFeature implements Feature< Link >
 	/*
 	 * The method below is important for features that *store* values. These
 	 * features have a 'computer' class that handles the computation logic. The
-	 * computer class is called by the user (in the 'Feature computation'
-	 * dialog), and when after it runs, the feature instance is created. It is
-	 * then just used to store and return values.
+	 * computer class is called by the user (in the 'compute features' dialog),
+	 * and when after it runs, the feature instance is created. It is then just
+	 * used to store and return values.
 	 * 
 	 * But additionally, Mastodon has a mechanism to invalidate the values of
 	 * the data items that are modified. Let's take for example the feature that
