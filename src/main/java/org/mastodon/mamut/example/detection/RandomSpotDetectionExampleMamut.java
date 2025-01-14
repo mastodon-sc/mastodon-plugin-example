@@ -1,6 +1,17 @@
 package org.mastodon.mamut.example.detection;
+import static org.mastodon.mamut.example.detection.RandomSpotDetectorOp.KEY_N_SPOTS;
+import static org.mastodon.tracking.detection.DetectorKeys.DEFAULT_MAX_TIMEPOINT;
+import static org.mastodon.tracking.detection.DetectorKeys.DEFAULT_MIN_TIMEPOINT;
+import static org.mastodon.tracking.detection.DetectorKeys.DEFAULT_RADIUS;
+import static org.mastodon.tracking.detection.DetectorKeys.DEFAULT_SETUP_ID;
+import static org.mastodon.tracking.detection.DetectorKeys.KEY_MAX_TIMEPOINT;
+import static org.mastodon.tracking.detection.DetectorKeys.KEY_MIN_TIMEPOINT;
+import static org.mastodon.tracking.detection.DetectorKeys.KEY_RADIUS;
+import static org.mastodon.tracking.detection.DetectorKeys.KEY_SETUP_ID;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.mastodon.mamut.model.ModelGraph;
 import org.mastodon.tracking.mamut.detection.AbstractSpotDetectorOp;
@@ -25,5 +36,17 @@ public class RandomSpotDetectionExampleMamut extends AbstractSpotDetectorOp
 	public void compute( final List< SourceAndConverter< ? > > sources, final ModelGraph graph )
 	{
 		exec( sources, graph, RandomSpotDetectorOp.class );
+	}
+
+	@Override
+	public Map< String, Object > getDefaultSettings()
+	{
+		final Map< String, Object > ds = new HashMap< String, Object >();
+		ds.put( KEY_SETUP_ID, DEFAULT_SETUP_ID );
+		ds.put( KEY_MIN_TIMEPOINT, DEFAULT_MIN_TIMEPOINT );
+		ds.put( KEY_MAX_TIMEPOINT, DEFAULT_MAX_TIMEPOINT );
+		ds.put( KEY_RADIUS, DEFAULT_RADIUS );
+		ds.put( KEY_N_SPOTS, 30 );
+		return ds;
 	}
 }
