@@ -30,8 +30,6 @@ import org.scijava.plugin.Plugin;
 public class RandomSpotDetectorDescriptor extends SpotDetectorDescriptor
 {
 
-	private static final NumberFormat FORMAT = new DecimalFormat( "0.0" );
-
 	private Settings settings;
 
 	public RandomSpotDetectorDescriptor()
@@ -53,6 +51,8 @@ public class RandomSpotDetectorDescriptor extends SpotDetectorDescriptor
 	 */
 	private static class ConfigPanel extends JPanel
 	{
+
+		private static final NumberFormat FORMAT = new DecimalFormat( "0.0" );
 
 		private static final long serialVersionUID = 1L;
 
