@@ -28,7 +28,7 @@
  */
 package org.mastodon.mamut.example.detection;
 
-import static org.mastodon.mamut.example.detection.RandomSpotDetectorOp.KEY_N_SPOTS;
+import static org.mastodon.mamut.example.detection.RandomSpotDetectionExampleMamut.KEY_N_SPOTS;
 import static org.mastodon.tracking.detection.DetectorKeys.KEY_RADIUS;
 
 import java.awt.Font;
