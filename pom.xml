@@ -13,7 +13,7 @@
 
 	<groupId>org.mastodon</groupId>
 	<artifactId>mastodon-plugin-example</artifactId>
-	<version>1.0.0-beta-24-SNAPSHOT</version>
+	<version>1.0.0-beta-24</version>
 
 	<name>Mastodon Plugin Example</name>
 	<description>A template / example code to start coding your own Mastodon plugin.</description>
@@ -62,7 +62,7 @@
 	<scm>
 		<connection>scm:git:git://github.com/mastodon-sc/mastodon-plugin-example</connection>
 		<developerConnection>scm:git:git@github.com:mastodon-sc/mastodon-plugin-example</developerConnection>
-		<tag>HEAD</tag>
+		<tag>mastodon-plugin-example-1.0.0-beta-24</tag>
 		<url>https://github.com/mastodon-sc/mastodon-plugin-example</url>
 	</scm>
 	<issueManagement>
