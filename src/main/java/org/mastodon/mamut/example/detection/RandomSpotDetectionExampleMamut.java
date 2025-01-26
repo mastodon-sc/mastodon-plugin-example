@@ -42,9 +42,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.mastodon.mamut.model.ModelGraph;
-import org.mastodon.tracking.detection.DetectionCreatorFactory.DetectionCreator;
+import org.mastodon.mamut.model.Spot;
 import org.mastodon.tracking.detection.DetectionUtil;
 import org.mastodon.tracking.mamut.detection.AbstractSpotDetectorOp;
 import org.mastodon.tracking.mamut.detection.SpotDetectorOp;
@@ -78,10 +79,10 @@ public class RandomSpotDetectionExampleMamut extends AbstractSpotDetectorOp
 	public void compute( final List< SourceAndConverter< ? > > sources, final ModelGraph graph )
 	{
 		/*
-		 * The abstract class `AbstractDetectorOp` we inherit provides several
-		 * useful fields that are used to store settings, communicate success or
-		 * failure with an error message, or sends messages to the user
-		 * interface.
+		 * The abstract class `AbstractSpotDetectorOp` we inherit provides
+		 * several useful fields that are used to store settings, communicate
+		 * success or failure with an error message, or sends messages to the
+		 * user interface.
 		 * 
 		 * The first one is the `ok` flag, that states whether the computation
 		 * finished successfully. If not, a meaningful error message should be
@@ -231,62 +232,11 @@ public class RandomSpotDetectionExampleMamut extends AbstractSpotDetectorOp
 			}
 
 			/*
-			 * We have now to create the `Spot` objects corresponding to these
-			 * detections to the model.
-			 * 
-			 * To simplify doing so, the detection framework uses a factory,
-			 * that can be configured elsewhere, and that provides facilities to
-			 * add new spots in a safe way. It is the second argument of the
-			 * `mutate1` method we implement. It has only one useful method,
-			 * that creates a spot adder for the current time-point.
-			 */
-			final DetectionCreator spotAdder = getDetectorFactory( graph ).create( tp );
-			/*
-			 * This spot adder is actually important. It is the medium through
-			 * which we offer *generalisability*.
-			 * 
-			 * Indeed, notice that we did not use any of the class specific to
-			 * the Mamut application in this class: there is no mention of the
-			 * `Spot` class nor to the `Model` class. Yet we will need to create
-			 * `Spot` objects from the detections and add them to the `Model`
-			 * instance of the data. This is what the `spotAdder` does.
-			 * 
-			 * The one we use in the Mamut application takes the detection,
-			 * creates spots from them and add them to the model. We could have
-			 * made another design devoid of the `spotAdder` and the
-			 * `detectionCreatorFactory`, directly using the `Model` class. But
-			 * we wanted to make it possible to reuse any of the detector we
-			 * built for Mastodon with other application type.
-			 * 
-			 * For instance, if someone wants to make a new application with the
-			 * Mastodon code, but that does not use the Mamut classes, they can
-			 * reuse directly the all the code under the
-			 * `org.mastodon.tracking.detection` package for detection. They
-			 * will have to implement a `DetectionCreatorFactory` specific to
-			 * their application, that will know how to add detections to their
-			 * specific model. But the actual detector code can be reused as is
-			 * with this design.
-			 * 
-			 * We already use the flexibility of this design in the Mamut
-			 * application, with several implementations of the
-			 * `DetectionCreatorFactory` interface. The "Advanced DoG detector"
-			 * offers a special option to configure the behavior of the
-			 * detector, when a spot is found where another already exists. The
-			 * user can specify whether they want to add it on top of the
-			 * existing one, skip adding the new spot, replace the existing one,
-			 * or remove all existing spots before detection (the default). This
-			 * is simply done with several implementations of
-			 * `DetectionCreatorFactory` that know how to perform each of these
-			 * behaviors.
-			 */
-
-			/*
-			 * Also: the detections are have now are just points. Their position
-			 * is stored in pixel units, in the reference frame of the source.
-			 * But each source might be rotated, translated, etc. And this might
-			 * change for every time-point and source. So before creating spots
-			 * we need to transform these points in the global coordinate
-			 * system.
+			 * The detections are just points. Their position is stored in pixel
+			 * units, in the reference frame of the source. But each source
+			 * might be rotated, translated, etc. And this might change for
+			 * every time-point and source. So before creating spots we need to
+			 * transform these points in the global coordinate system.
 			 * 
 			 * This is done with an `AffineTransform3D`, also stored in the
 			 * source. There is utility method to extract it for the current
@@ -295,31 +245,19 @@ public class RandomSpotDetectionExampleMamut extends AbstractSpotDetectorOp
 			final AffineTransform3D transform = DetectionUtil.getTransform( sources, tp, setup, level );
 
 			/*
-			 * Coming back to the `spotAdder`. Adding spots must be done within
-			 * a block calling the following methods in order:
+			 * We have now to create the `Spot` objects corresponding to these
+			 * detections to the model.
+			 * 
+			 * We want to be nice and efficient. We will use a spot reference
+			 * for addition, and lock the graph for modification. To be extra
+			 * cautious we lock and unlock the graph in a try / finally block.
 			 */
 
-			/**
-			 * <pre>
-			 * spotAdder.preAddition();
-			 * try {
-			 * 		// Detect objects and transform their position.
-			 * 		...
-			 * 		spotAdder.createDetection( pos, radius, quality );
-			 * }
-			 * finally
-			 * {
-			 * 		spotAdder.postAddition();
-			 * }
-			 * </pre>
-			 */
-
-			/*
-			 * `preAddition()` and `postAddition()` contain any task that must
-			 * be performed before and after adding detection to the model in
-			 * batch. In our case this yields:
-			 */
-			spotAdder.preAddition();
+			// The lock.
+			final ReentrantReadWriteLock lock = graph.getLock();
+			lock.writeLock().lock();
+			// The ref.
+			final Spot ref = graph.vertexRef();
 			try
 			{
 				for ( final double[] point : points )
@@ -336,17 +274,32 @@ public class RandomSpotDetectionExampleMamut extends AbstractSpotDetectorOp
 					 * `worldCoords` now contains the coordinate of the
 					 * detection, in physical units, in the global reference
 					 * frame. We can now create the `Spot` object from these
-					 * coordinates, using the `spotAdder` we created above. It
-					 * requires a `quality` value, for which we use a dummy
-					 * random value as well.
+					 * coordinates.
+					 */
+					final Spot spot = graph.addVertex( ref ).init( tp, worldCoords, radius );
+
+					/*
+					 * Mastodon stores a `quality` feature value, that reports
+					 * how 'good' the detection is. By convention, it is a
+					 * strictly positive value (zero or negative values can be
+					 * used to indicated manual creation), not necessarily
+					 * normalized. Large quality values are indicative of spots
+					 * for which the confidence is high. The exact signification
+					 * depends on the detector implementation.
+					 * 
+					 * Here is will be just random and the abstract class has a
+					 * protected field for the quality feature ready to use.
 					 */
 					final double quality = ran.nextDouble();
-					spotAdder.createDetection( worldCoords, radius, quality );
+					qualityFeature.set( spot, quality );
 				}
 			}
 			finally
 			{
-				spotAdder.postAddition();
+				// unlock.
+				lock.writeLock().unlock();
+				// release the ref.
+				graph.releaseRef( ref );
 			}
 		}
 
@@ -360,6 +313,10 @@ public class RandomSpotDetectionExampleMamut extends AbstractSpotDetectorOp
 	@Override
 	public Map< String, Object > getDefaultSettings()
 	{
+		/*
+		 * We declare all the parameters required by this detector by returning
+		 * a new map containing default values *of the right class*.
+		 */
 		final Map< String, Object > ds = new HashMap< String, Object >();
 		ds.put( KEY_SETUP_ID, DEFAULT_SETUP_ID );
 		ds.put( KEY_MIN_TIMEPOINT, DEFAULT_MIN_TIMEPOINT );
