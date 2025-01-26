@@ -37,7 +37,7 @@
 	<properties>
 	
 		<mastodon.group>org.mastodon</mastodon.group>
-		<mastodon-app.version>1.0.0-beta-28-SNAPSHOT</mastodon-app.version>
+		<mastodon-app.version>1.0.0-beta-28</mastodon-app.version>
 		
 		<package-name>org.mastodon</package-name>
 
